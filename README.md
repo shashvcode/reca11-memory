@@ -7,6 +7,7 @@
 - **Evolving thematic summaries**
 
 This enables better recall, continuity, and personalization in any app powered by large language models.
+
 Link to research article : COMING SOON!
 
 ---
@@ -16,8 +17,8 @@ Link to research article : COMING SOON!
 Install the SDK via pip:
 
 ```bash
-pip install reca11-core
-
+pip install reca11-memory
+```
 
 ⸻
 
@@ -35,7 +36,8 @@ Quickstart
 
 Here’s how to get up and running in just a few lines:
 
-from recall_core import Reca11
+```python
+from reca11 import Reca11
 
 rc = Reca11(
     api_key="your-api-key",
