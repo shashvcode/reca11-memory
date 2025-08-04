@@ -1,6 +1,7 @@
 import requests
 BASE_URL = "https://reca11-memory.onrender.com"
 
+# Wrapper class for the Reca11 API, to be used in SDK
 class Reca11:
     def __init__(self, api_key: str, openai_key: str, project_name: str):
         self.api_key = api_key
