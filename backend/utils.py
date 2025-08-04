@@ -1,10 +1,10 @@
 import threading
 import logging
 from typing import List, Dict
-from models import get_last_three_chats, get_project, add_chat, add_summary, add_memory
-from prompts import summary_prompt, strands_prompt, generate_questions_prompt
-from memory.rag_utils import retrieve, upsert_strands
-from memory.llm_utils import LLMUtils 
+from .models import get_last_three_chats, get_project, add_chat, add_summary, add_memory
+from .prompts import summary_prompt, strands_prompt, generate_questions_prompt
+from .memory.rag_utils import retrieve, upsert_strands
+from .memory.llm_utils import LLMUtils 
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
