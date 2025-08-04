@@ -35,7 +35,7 @@ Quickstart
 
 Here’s how to get up and running in just a few lines:
 
-from reca11 import Reca11
+from recall_core import Reca11
 
 rc = Reca11(
     api_key="your-api-key",
