@@ -4,6 +4,7 @@ import os
 import uuid
 import logging
 from typing import List
+from datetime import datetime
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -31,7 +32,8 @@ def upsert_strands(strand: str, project_name: str, embed):
                     "values": embedding,
                     "metadata": {
                         "project_name": project_name,
-                        "fact_text": strand  
+                        "fact_text": strand,
+                        "created_at": datetime.now().isoformat()
                     }
                 }
             ],
@@ -63,14 +65,26 @@ def retrieve(questions: List[str], project_name: str, embed):
                 logger.debug(f"Found {matches_count} matches for question {i+1}")
                 
                 for match in result.get("matches", []):
-                    fact = match.get("metadata", {}).get("fact_text")
+                    metadata = match.get("metadata", {})
+                    fact = metadata.get("fact_text")
+                    created_at = metadata.get("created_at")
                     if fact:
-                        retrieved_facts.append(fact)
+                        retrieved_facts.append({
+                            "fact_text": fact,
+                            "created_at": created_at
+                        })
             except Exception as e:
                 logger.warning(f"Failed to process question {i+1}: {e}")
                 continue
 
-        unique_facts = list(set(retrieved_facts))
+        seen_facts = set()
+        unique_facts = []
+        for fact_dict in retrieved_facts:
+            fact_text = fact_dict["fact_text"]
+            if fact_text not in seen_facts:
+                seen_facts.add(fact_text)
+                unique_facts.append(fact_dict)
+        
         logger.info(f"Retrieved {len(unique_facts)} unique facts from {len(retrieved_facts)} total matches")
         return unique_facts
     except Exception as e:
