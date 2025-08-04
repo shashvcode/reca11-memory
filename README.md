@@ -18,23 +18,24 @@ Install the SDK via pip:
 
 ```bash
 pip install reca11-memory
+```
 
+---
 
-⸻
-
-Generate an API Key
+## Generate an API Key
 
 To use the memory service, you’ll need an API key.
 
-Visit: https://reca11-memory-1.onrender.com
-Click the “Generate API Key” button to instantly receive a unique key.
+Visit: [https://reca11-memory-1.onrender.com](https://reca11-memory-1.onrender.com)  
+Click the **"Generate API Key"** button to instantly receive a unique key.
 
-⸻
+---
 
-Quickstart
+## Quickstart
 
 Here’s how to get up and running in just a few lines:
 
+```python
 from reca11 import Reca11
 
 rc = Reca11(
@@ -51,24 +52,26 @@ chat_pair = {
 memory = rc.recall(chat_pair)
 
 print(memory)
+```
 
+---
 
-⸻
-
-Health Check
+## Health Check
 
 To verify the backend is online:
 
+```
 GET https://reca11-memory.onrender.com/health
+```
 
-Expected response:
+**Expected response:**
 
+```json
 { "status": "ok" }
+```
 
+---
 
-⸻
-
-License
+## License
 
 This project is open-sourced under the terms of the MIT License.
-
