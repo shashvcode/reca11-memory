@@ -1,3 +1,4 @@
+text
 # Reca11 — Memory Layer for LLMs
 
 **Reca11** is a plug-and-play memory architecture designed to add persistent context to your LLM applications. It intelligently tracks and stores three core components of every conversation:
@@ -8,7 +9,7 @@
 
 This enables better recall, continuity, and personalization in any app powered by large language models.
 
-Link to research article : COMING SOON!
+Link to research article: **COMING SOON!**
 
 ---
 
@@ -16,62 +17,62 @@ Link to research article : COMING SOON!
 
 Install the SDK via pip:
 
-```bash
 pip install reca11-memory
-```
 
-⸻
+text
 
-Generate an API Key
+---
+
+## Generate an API Key
 
 To use the memory service, you’ll need an API key.
 
-Visit:
-https://reca11-memory-1.onrender.com
-Click the “Generate API Key” button to instantly receive a unique key.
+Visit: [https://reca11-memory-1.onrender.com]
+Click the "Generate API Key" button to instantly receive a unique key.
 
-⸻
+---
 
-Quickstart
+## Quickstart
 
 Here’s how to get up and running in just a few lines:
 
-```python
 from reca11 import Reca11
 
 rc = Reca11(
-    api_key="your-api-key",
-    openai_key="your-openai-key",
-    project_name="my-project"
+api_key="your-api-key",
+openai_key="your-openai-key",
+project_name="my-project"
 )
 
 chat_pair = {
-    "user": "What did I say I wanted to build?",
-    "assistant": "You said you wanted to build a memory SDK for LLMs."
+"assistant": "Hi! What did you do today?,
+"user": "I tried pineapple on pizza. Safe to say I'm not a fan!"
 }
 
 memory = rc.recall(chat_pair)
 
 print(memory)
 
+text
 
-⸻
+---
 
-Health Check
+## Health Check
 
 To verify the backend is online:
 
 GET https://reca11-memory.onrender.com/health
 
+text
+
 Expected response:
 
 { "status": "ok" }
 
-
-⸻
-
-License
-
-This project is open-sourced under the terms of the MIT License.
+text
 
 ---
+
+## License
+
+This project is open-sourced under the terms of the MIT License.
