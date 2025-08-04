@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reca11 - Get API Key</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.2.0/github-markdown.min.css">
     <style>
         * {
             margin: 0;
@@ -121,21 +122,32 @@
 </head>
 <body>
     <div class="container">
-        <h1>Reca11</h1>
-        <p class="subtitle">Memory layer for LLMs</p>
-        
-        <button class="generate-btn" id="generateBtn" onclick="generateApiKey()">
-            Generate API Key
-        </button>
-
-        <div class="result" id="result">
-            <p><strong>Your API Key:</strong></p>
-            <div class="api-key" id="apiKey"></div>
-            <button class="copy-btn" onclick="copyKey()">Copy</button>
-            <div class="success" id="copySuccess">✓ Copied to clipboard</div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+            <button class="generate-btn" style="width: 48%;" onclick="showTab('key')">🔑 API Key</button>
+            <button class="generate-btn" style="width: 48%; background-color: #0f172a;" onclick="showTab('docs')">📄 API Docs</button>
         </div>
 
-        <div class="error" id="error"></div>
+        <div id="keyTab">
+            <h1>Reca11</h1>
+            <p class="subtitle">Memory layer for LLMs</p>
+            
+            <button class="generate-btn" id="generateBtn" onclick="generateApiKey()">
+                Generate API Key
+            </button>
+
+            <div class="result" id="result">
+                <p><strong>Your API Key:</strong></p>
+                <div class="api-key" id="apiKey"></div>
+                <button class="copy-btn" onclick="copyKey()">Copy</button>
+                <div class="success" id="copySuccess">✓ Copied to clipboard</div>
+            </div>
+
+            <div class="error" id="error"></div>
+        </div>
+
+        <div id="docsTab" style="display: none;">
+            <article class="markdown-body" id="docs" style="padding: 2rem; max-height: 600px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; background: white;"></article>
+        </div>
     </div>
 
     <script>
@@ -190,6 +202,28 @@
                 console.error('Copy failed:', err);
             }
         }
+
+        function showTab(tab) {
+            document.getElementById('keyTab').style.display = tab === 'key' ? 'block' : 'none';
+            document.getElementById('docsTab').style.display = tab === 'docs' ? 'block' : 'none';
+            
+            if (tab === 'docs' && document.getElementById('docs').innerHTML === '') {
+                loadMarkdownDocs();
+            }
+        }
+
+        function loadMarkdownDocs() {
+            fetch('/docs.md')
+                .then(res => res.text())
+                .then(md => {
+                    const converter = new showdown.Converter();
+                    document.getElementById('docs').innerHTML = converter.makeHtml(md);
+                })
+                .catch(err => {
+                    document.getElementById('docs').innerHTML = '<p>Error loading documentation. <a href="https://reca11-memory.onrender.com/docs" target="_blank">View API Docs</a></p>';
+                });
+        }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/showdown/dist/showdown.min.js"></script>
 </body>
 </html>

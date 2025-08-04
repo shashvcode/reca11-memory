@@ -8,7 +8,7 @@ from .routes import router
 limiter = Limiter(key_func=get_remote_address)
 app = FastAPI(
     title="Reca11 Memory API",
-    description="A lightweight open-source memory architecture for LLMs. Manage chat memory, summaries, and memory strands via simple endpoints.",
+    description="A lightweight open-source memory layer for LLMs. Manage chat memory, summaries, and memory strands via simple endpoints.",
     version="1.0.0",
     contact={
         "name": "Reca11",
