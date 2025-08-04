@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import os
 import uuid
 import logging
+import certifi
 import re
 from datetime import datetime
 
@@ -13,7 +14,7 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 try:
-    client = MongoClient(os.getenv("MONGODB_URI"), server_api=ServerApi('1'))
+    client = MongoClient(os.getenv("MONGODB_URI"), server_api=ServerApi('1'), tls = True, tlsCAFile=certifi.where())
     db = client["reca11_db"]
     users_col = db["users"]
     projects_col = db["projects"]
