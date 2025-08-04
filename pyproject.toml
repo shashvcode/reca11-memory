@@ -1,5 +1,5 @@
 [project]
-name = "recall_core"
+name = "reca11_core"
 version = "0.1.1"
 description = "Memory layer and SDK for LLMs"
 readme = "README.md"
@@ -22,5 +22,5 @@ dependencies = [
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-packages = ["recall_core", "backend", "backend.memory"]
+[tool.setuptools.packages.find]
+where = ["."]
