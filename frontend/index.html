@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reca11 - Get API Key</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.2.0/github-markdown.min.css">
+    <title>Reca11 - Memory Layer for LLMs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -12,156 +15,345 @@
             box-sizing: border-box;
         }
 
+        #tsparticles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: #000;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            background: #000;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #334155;
+            color: #fff;
+            overflow-x: hidden;
         }
 
         .container {
-            background: white;
-            border-radius: 12px;
-            padding: 2.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
+            position: relative;
         }
 
-        h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #1e293b;
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.03) 0%, transparent 50%);
+            pointer-events: none;
         }
 
-        .subtitle {
-            color: #64748b;
+        .logo {
+            font-size: 4.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #fff;
+            text-shadow: 0 0 40px rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+            max-width: 600px;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+            color: #e5e5e5;
+        }
+
+
+
+        .api-key-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 3rem;
+            margin: 3rem 0;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .api-key-section h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .api-key-section p {
+            font-size: 1.1rem;
+            opacity: 0.8;
             margin-bottom: 2rem;
-            font-size: 0.95rem;
+            color: #e5e5e5;
         }
 
-        .generate-btn {
-            background: #3b82f6;
-            color: white;
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
             border: none;
-            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
             font-size: 1rem;
-            font-weight: 500;
-            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.2s;
-            width: 100%;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 160px;
+            justify-content: center;
         }
 
-        .generate-btn:hover {
-            background: #2563eb;
+        .btn-primary {
+            background: #fff;
+            color: #000;
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
         }
 
-        .generate-btn:disabled {
-            background: #94a3b8;
-            cursor: not-allowed;
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 255, 255, 0.3);
         }
 
-        .result {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background: #f1f5f9;
-            border-radius: 8px;
-            display: none;
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
         }
 
-        .result.show {
-            display: block;
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-3px);
         }
 
-        .api-key {
-            font-family: 'Courier New', monospace;
-            font-size: 0.85rem;
-            background: white;
-            padding: 0.75rem;
-            border-radius: 6px;
-            border: 1px solid #e2e8f0;
+        .result-container {
+            margin-top: 2rem;
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.5s ease;
+        }
+
+        .api-key-display {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
             word-break: break-all;
-            margin: 0.75rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
         }
 
         .copy-btn {
-            background: #10b981;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
             color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
-            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
         }
 
         .copy-btn:hover {
-            background: #059669;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
         }
 
         .error {
-            color: #dc2626;
-            font-size: 0.875rem;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            padding: 1rem;
+            border-radius: 12px;
             margin-top: 1rem;
             display: none;
+            color: #fff;
         }
 
-        .success {
-            color: #16a34a;
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
-            display: none;
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 4rem 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .feature h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .feature p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            line-height: 1.5;
+            color: #d1d1d1;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 3rem;
+            }
+            
+            .tagline {
+                font-size: 1.2rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 250px;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .api-key-section {
+                padding: 2rem;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+        }
+
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .features {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1.5rem;
+            }
+            
+            .feature {
+                padding: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
+    <div id="tsparticles"></div>
     <div class="container">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
-            <button class="generate-btn" style="width: 48%;" onclick="showTab('key')">🔑 API Key</button>
-            <button class="generate-btn" style="width: 48%; background-color: #0f172a;" onclick="showTab('docs')">📄 API Docs</button>
-        </div>
+        <section class="hero">
+            <h1 class="logo">Reca11</h1>
+            <p class="tagline">Lightweight Memory Layer for LLMs</p>
 
-        <div id="keyTab">
-            <h1>Reca11</h1>
-            <p class="subtitle">Memory layer for LLMs</p>
-            
-            <button class="generate-btn" id="generateBtn" onclick="generateApiKey()">
-                Generate API Key
-            </button>
+            <div class="api-key-section">
+                <h2>Get Started</h2>
+                <p>Generate your API key and start building memory-enabled LLM applications</p>
+                
+                <div class="cta-buttons">
+                    <button class="btn btn-primary" onclick="generateApiKey()">
+                        🔑 Generate API Key
+                    </button>
+                    <a href="https://github.com/shashvcode/reca11-memory" target="_blank" class="btn btn-secondary">
+                        📚 View Documentation
+                    </a>
+                </div>
 
-            <div class="result" id="result">
-                <p><strong>Your API Key:</strong></p>
-                <div class="api-key" id="apiKey"></div>
-                <button class="copy-btn" onclick="copyKey()">Copy</button>
-                <div class="success" id="copySuccess">✓ Copied to clipboard</div>
+                <div id="result" class="result-container">
+                    <div class="api-key-display" id="apiKeyDisplay">Your API key will appear here</div>
+                    <button class="copy-btn" onclick="copyToClipboard()">Copy API Key</button>
+                </div>
+
+                <div id="error" class="error"></div>
             </div>
-
-            <div class="error" id="error"></div>
-        </div>
-
-        <div id="docsTab" style="display: none;">
-            <article class="markdown-body" id="docs" style="padding: 2rem; max-height: 600px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; background: white;"></article>
-        </div>
+             
+            <div class="features">
+                <div class="feature">
+                    <span class="feature-icon">🧠</span>
+                    <h3>Smart Memory</h3>
+                    <p>Automatically generate and store memory strands from conversations</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">📝</span>
+                    <h3>Auto Summaries</h3>
+                    <p>Keep track of conversation context with intelligent summarization</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">🔍</span>
+                    <h3>Semantic Search</h3>
+                    <p>Retrieve relevant memories using vector-based similarity search</p>
+                </div>
+            </div>
+        </section>
     </div>
 
     <script>
-        let currentKey = '';
+        let currentApiKey = '';
 
         async function generateApiKey() {
-            const btn = document.getElementById('generateBtn');
-            const result = document.getElementById('result');
+            const btn = document.querySelector('.btn-primary');
             const error = document.getElementById('error');
-            
-            btn.disabled = true;
-            btn.textContent = 'Generating...';
+            const apiKeyDisplay = document.getElementById('apiKeyDisplay');
+
+            btn.textContent = '⏳ Generating...';
             error.style.display = 'none';
-            result.classList.remove('show');
 
             try {
                 const response = await fetch('https://reca11-memory.onrender.com/apikey/create', {
@@ -172,58 +364,120 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error('Failed to generate API key');
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
                 const data = await response.json();
-                currentKey = data.api_key;
+                currentApiKey = data.api_key;
+                apiKeyDisplay.textContent = currentApiKey;
                 
-                document.getElementById('apiKey').textContent = currentKey;
-                result.classList.add('show');
-
             } catch (err) {
-                error.textContent = 'Error: ' + err.message;
+                error.textContent = `Error: ${err.message}`;
                 error.style.display = 'block';
             } finally {
-                btn.disabled = false;
-                btn.textContent = 'Generate API Key';
+                btn.innerHTML = '🔑 Generate API Key';
             }
         }
 
-        async function copyKey() {
-            try {
-                await navigator.clipboard.writeText(currentKey);
-                const success = document.getElementById('copySuccess');
-                success.style.display = 'block';
+        async function copyToClipboard() {
+            if (!currentApiKey) {
+                const copyBtn = document.querySelector('.copy-btn');
+                copyBtn.textContent = '⚠️ Generate key first';
                 setTimeout(() => {
-                    success.style.display = 'none';
+                    copyBtn.textContent = 'Copy API Key';
+                }, 2000);
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(currentApiKey);
+                const copyBtn = document.querySelector('.copy-btn');
+                copyBtn.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    copyBtn.textContent = 'Copy API Key';
                 }, 2000);
             } catch (err) {
-                console.error('Copy failed:', err);
+                console.error('Failed to copy: ', err);
             }
-        }
-
-        function showTab(tab) {
-            document.getElementById('keyTab').style.display = tab === 'key' ? 'block' : 'none';
-            document.getElementById('docsTab').style.display = tab === 'docs' ? 'block' : 'none';
-            
-            if (tab === 'docs' && document.getElementById('docs').innerHTML === '') {
-                loadMarkdownDocs();
-            }
-        }
-
-        function loadMarkdownDocs() {
-            fetch('/docs.md')
-                .then(res => res.text())
-                .then(md => {
-                    const converter = new showdown.Converter();
-                    document.getElementById('docs').innerHTML = converter.makeHtml(md);
-                })
-                .catch(err => {
-                    document.getElementById('docs').innerHTML = '<p>Error loading documentation. <a href="https://reca11-memory.onrender.com/docs" target="_blank">View API Docs</a></p>';
-                });
         }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/showdown/dist/showdown.min.js"></script>
+
+    <script>
+        tsParticles.load("tsparticles", {
+            background: {
+                color: {
+                    value: "#000"
+                }
+            },
+            fpsLimit: 60,
+            interactivity: {
+                events: {
+                    onHover: {
+                        enable: true,
+                        mode: "repulse"  
+                    },
+                    resize: true
+                },
+                modes: {
+                    repulse: {
+                        distance: 50,
+                        duration: 0.15
+                    }
+                }
+            },
+            particles: {
+                color: {
+                    value: "#ffffff"
+                },
+                links: {
+                    enable: false
+                },
+                move: {
+                    enable: true,
+                    speed: 1.5,
+                    direction: "none",
+                    outModes: "bounce",
+                    random: true,
+                    straight: false,
+                    attract: {
+                        enable: false,
+                        rotateX: 600,
+                        rotateY: 1200
+                    }
+                },
+                number: {
+                    value: 400,
+                    density: {
+                        enable: true,
+                        area: 800
+                    }
+                },
+                opacity: {
+                    value: 0.4,
+                    random: true,
+                    animation: {
+                        enable: true,
+                        speed: 1,
+                        minimumValue: 0.1,
+                        sync: false
+                    }
+                },
+                shape: {
+                    type: "circle"
+                },
+                size: {
+                    value: { min: 1, max: 3 },
+                    random: true,
+                    animation: {
+                        enable: true,
+                        speed: 3,
+                        minimumValue: 0.5,
+                        sync: false
+                    }
+                }
+            },
+            detectRetina: true
+        });
+    </script>
 </body>
 </html>
