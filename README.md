@@ -1,14 +1,18 @@
 # Reca11 — Memory Layer for LLMs
 
-**Reca11** is a plug-and-play memory architecture designed to bring persistent, structured context to your LLM applications. It intelligently captures and stores three essential layers of conversational memory:
+**Reca11** is a plug-and-play memory architecture designed to bring persistent, structured context to your LLM applications. 
 
-- **Recent chat history**
+While LLMs are becoming more cohesive and capable by the day, they’re often of no use if they can’t remember what happened before. Without memory, every conversation starts from scratch, forcing users to repeat themselves. The reca11 SDK was built to take care of exactly this.
+
+It intelligently captures and stores three essential layers of conversational memory:
+
+- **The most recent chat history**
 - **Standalone factual strands extracted from the dialogue**
 - **Evolving thematic summaries that reflect the conversation’s trajectory over time**
 
 The core reca11 function delivers a compact, high-relevance context package by combining all three elements. This ensures your LLM receives rich and persistent memory without overwhelming the context window.
 
-I’m currently conducting a study that outlines this architecture in depth and benchmarks its performance against leading industry memory solutions.
+I’m currently writing a paper that outlines this architecture in depth and benchmarks its performance against leading industry memory solutions.
 
 Link to research article: COMING SOON!
 
