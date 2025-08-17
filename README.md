@@ -39,7 +39,7 @@ Click the **"Generate API Key"** button to instantly receive a unique key.
 
 ## Quickstart
 
-Here’s how to get up and running in just a few lines:
+Here’s how to get up and running in just a few lines. The final output of the following code is a memory context package that cna be directly fed into the system prompt of an LLM:
 
 ```python
 from reca11 import Reca11
