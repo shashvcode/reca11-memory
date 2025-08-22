@@ -89,6 +89,12 @@ def recall(api_key: str, project_name: str, chat_pair: Dict[str, str], openai_ke
             recent_chats = recent_chats_result.get("last_three_chats", [])
             logger.info("Recent chats retrieved successfully")
 
+        chat_result = add_chat(api_key, project_name, chat_pair["user"], chat_pair["assistant"])
+        if "error" in chat_result:
+            logger.error(f"Failed to add chat: {chat_result['error']}")
+            return
+        logger.info("Chat added successfully")
+
         project = get_project(api_key, project_name)
         if "error" in project:
             logger.error(f"Failed to retrieve project: {project['error']}")
@@ -104,22 +110,21 @@ def recall(api_key: str, project_name: str, chat_pair: Dict[str, str], openai_ke
         ragged_memory = retrieve(questions, project_name, llm.embed)
         logger.info(f"Retrieved {len(ragged_memory)} memory items successfully")
 
-        result = {
-            "recent_chats": recent_chats,
-            "summary": summary,
-            "ragged_memory": ragged_memory
-        }
+        result = f"""
+        Recent chats: 
+        {recent_chats}
+
+        Summary:
+        {summary}
+
+        Ragged memory:
+        {ragged_memory}
+        """
         logger.info("Context package generated successfully")
 
         def background_update():
             try:
                 logger.info("Starting background update")
-                
-                chat_result = add_chat(api_key, project_name, chat_pair["user"], chat_pair["assistant"])
-                if "error" in chat_result:
-                    logger.error(f"Failed to add chat: {chat_result['error']}")
-                    return
-                logger.info("Chat added successfully")
                 
                 strands = generate_strands(str(chat_pair), llm.get_response)
                 logger.info("Strands generated successfully")
