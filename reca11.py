@@ -41,3 +41,16 @@ class Reca11:
             raise RuntimeError(f"Unexpected recall failure: {response.status_code} - {response.text}")
 
         return response.json()
+    
+    def get_strands(self):
+        params = {
+            "api_key": self.api_key,
+            "project_name": self.project_name
+        }
+        response = requests.get(f"{BASE_URL}/memory/all", params=params)
+
+        if response.status_code == 404:
+            raise ValueError("Project not found. Please create a project first.")
+        elif response.status_code != 200:
+            raise RuntimeError(f"Unexpected error getting strands: {response.status_code} - {response.text}")
+        return response.json()

@@ -251,3 +251,30 @@ def get_last_three_chats(api_key, project_name):
     except Exception as e:
         logger.error(f"Failed to get last 3 chats for project {project_name}: {e}")
         raise
+
+
+def get_memory_strands(api_key, project_name):
+    try:
+        if not validate_api_key(api_key):
+            logger.error("Invalid API key format")
+            return {"error": "Invalid API key format"}
+        
+        if not validate_project_name(project_name):
+            logger.error("Invalid project name")
+            return {"error": "Invalid project name"}
+        
+        logger.info(f"Getting memory strands for project: {project_name} for user: {api_key}")
+        project = projects_col.find_one(
+            {"owner_api_key": api_key, "project_name": project_name},
+            {"_id": 0, "memory_strands": 1}
+        )
+        if not project:
+            logger.warning(f"Project {project_name} not found")
+            return {"error": "Project not found."}
+        
+        memory_strands = project.get("memory_strands", [])
+        logger.info(f"Retrieved {len(memory_strands)} memory strands successfully")
+        return {"memory_strands": memory_strands}
+    except Exception as e:
+        logger.error(f"Failed to get memory strands for project {project_name}: {e}")
+        raise

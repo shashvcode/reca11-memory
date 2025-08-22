@@ -4,7 +4,7 @@ from slowapi.util import get_remote_address
 from .schemas import ProjectCreate, MemoryStrandCreate, ChatCreate, SummaryCreate, RecallRequest
 from .models import (
     create_api_key, create_project, add_memory, add_chat, add_summary, 
-    get_project, get_last_three_chats
+    get_project, get_last_three_chats, get_memory_strands
 )
 from .utils import recall
 import json
@@ -80,6 +80,17 @@ async def get_project_info(request: Request, api_key: str, project_name: str):
         logger.error(f"Failed to get project {project_name}: {result['error']}")
         raise HTTPException(status_code=404, detail=result["error"])
     logger.info(f"Project info retrieved for {project_name}")
+    return result
+
+@router.get("/memory/all")
+@limiter.limit("30/minute")
+async def get_all_memory_strands(request: Request, api_key: str, project_name: str):
+    logger.info(f"Get all memory strands request for project: {project_name}")
+    result = get_memory_strands(api_key, project_name)
+    if "error" in result:
+        logger.error(f"Failed to get memory strands for project {project_name}: {result['error']}")
+        raise HTTPException(status_code=404, detail=result["error"])
+    logger.info(f"Memory strands retrieved for project {project_name}")
     return result
 
 @router.post("/recall")
