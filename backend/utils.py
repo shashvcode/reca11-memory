@@ -2,8 +2,8 @@ import threading
 import logging
 from typing import List, Dict
 from .models import get_last_three_chats, get_project, add_chat, add_summary, add_memory
-from .prompts import summary_prompt, strands_prompt, generate_questions_prompt
-from .memory.rag_utils import retrieve, upsert_strands
+from .prompts import summary_prompt, strands_prompt, generate_questions_prompt, deduplicate_strands_prompt
+from .memory.rag_utils import retrieve, upsert_strands, retrieve_for_deduplication
 from .memory.llm_utils import LLMUtils 
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -52,6 +52,29 @@ def generate_questions(chat_pair: Dict[str, str], generate_response):
     except Exception as e:
         logger.error(f"Failed to generate questions: {e}")
         raise
+
+def deduplicate_strands(strand, project_name: str, embed, generate_response):
+    try:
+        logger.info(f"Deduplicating strand for project: {project_name}")
+        semantically_similar_strands = retrieve_for_deduplication(strand, project_name, embed)
+        if not semantically_similar_strands:
+            logger.info("No semantically similar strands found, some error in retrieval")
+            return "pass"
+        
+        logger.info(f"Found {len(semantically_similar_strands)} semantically similar strands")
+        
+        logger.info("Sending to LLM for deduplication")
+        prompt = deduplicate_strands_prompt()
+        user_prompt = f"""
+        Here is the strand: {strand}
+        Here are the semantically similar strands: {semantically_similar_strands}
+        """
+        strand_status = generate_response(prompt, user_prompt, ast_parse_response=False)
+        logger.info("Checked strand successfully")
+        return strand_status
+    except Exception as e:
+        logger.error(f"Failed to check strand for duplication: {e}")
+        return "pass"
 
 def recall(api_key: str, project_name: str, chat_pair: Dict[str, str], openai_key: str):
     try:
@@ -103,6 +126,11 @@ def recall(api_key: str, project_name: str, chat_pair: Dict[str, str], openai_ke
                 
                 for i, strand in enumerate(strands):
                     try:
+                        strand_status = deduplicate_strands(strand, project_name, llm.embed, llm.get_response)
+                        if strand_status == "fail":
+                            logger.info(f"Strand {i+1} is a duplicate, skipping")
+                            continue
+                        
                         memory_result = add_memory(api_key, project_name, strand)
                         if "error" in memory_result:
                             logger.warning(f"Failed to add memory strand {i+1}: {memory_result['error']}")

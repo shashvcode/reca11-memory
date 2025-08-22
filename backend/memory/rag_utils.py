@@ -90,3 +90,32 @@ def retrieve(questions: List[str], project_name: str, embed):
     except Exception as e:
         logger.error(f"Failed to retrieve facts for project {project_name}: {e}")
         raise
+
+
+def retrieve_for_deduplication(strand: str, project_name: str, embed): 
+    try:
+        logger.info(f"Starting retrieval for deduplication for project: {project_name}")
+        
+        embedding = embed(strand)
+        result = index.query(
+            vector=embedding,
+            top_k=3,
+            namespace=project_name,
+            include_metadata=True
+        )
+                
+        matches_count = len(result.get("matches", []))
+        logger.debug(f"Found {matches_count} matches for strand")
+        
+        retrieved_facts = []
+        for match in result.get("matches", []):
+            metadata = match.get("metadata", {})
+            fact = metadata.get("fact_text")
+            if fact:
+                retrieved_facts.append(fact)
+        
+        logger.info(f"Retrieved {len(retrieved_facts)} facts for deduplication check")
+        return retrieved_facts
+    except Exception as e:
+        logger.error(f"Failed to retrieve facts for project {project_name}: {e}")
+        raise

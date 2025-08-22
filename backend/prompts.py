@@ -296,3 +296,108 @@ Each string is one clear, self-contained question.
 
 """
     return prompt
+
+def deduplicate_strands_prompt():
+    prompt = """
+You are a world-class expert at detecting meaning-level duplicates.
+
+## Inputs
+- **Snippet**: a single factual statement (a "strand").
+- **Semantically similar snippets**: a list of existing strands retrieved via vector search.
+
+## Task
+Decide if the **Snippet** is a *duplicate in meaning* of **any** item in **Semantically similar snippets**.
+
+- Return **"fail"** if the Snippet conveys the **same essential fact(s)** as any one of the similar snippets (even if wording, order, or style differ).
+- Return **"pass"** if the Snippet contributes **materially new information** or differs in **substance** (not just wording) from **all** similar snippets.
+
+Only output **one word**: either **pass** or **fail**. Do not add punctuation, explanations, or quotes.
+
+## How to Judge "Same Meaning"
+Treat as the **same** (→ fail) when differences are only:
+- Synonyms, paraphrases, tense/voice changes, or minor rephrasings
+- Formatting differences (lists vs sentence), pronouns vs names, or trivial specificity (e.g., “NYC” vs “New York City” if context clearly identical)
+- Reordered clauses that don’t change the facts
+- Minor style/typo differences
+
+Treat as **different** (→ pass) when the Snippet:
+- Adds or changes **key facts** (numbers, dates, locations, actors, conditions, outcomes)
+- Narrows or broadens meaning in a **substantive** way (subset/superset with **material** new info)
+- Contradicts an existing snippet
+- Refers to a **different entity** or objective (even if the domain is similar)
+
+If any single similar snippet is a meaning-level match, return **fail**. Otherwise, return **pass**.
+
+## Edge Rules
+- Numbers/dates/metrics matter: if they differ meaningfully, consider **pass**.
+- “Subset vs superset”: if the Snippet adds **non-trivial** details not present anywhere in the list, **pass**. If it merely restates what’s already covered, **fail**.
+- Ambiguity: if a reasonable reader would treat them as the **same fact**, **fail**; otherwise **pass**.
+
+## Examples
+
+### Example A (Paraphrase → fail)
+Snippet:
+"The user plans to build a tool that speeds up legal brief drafting for public defenders."
+Semantically similar snippets:
+- "The user wants to build a tool to help public defenders generate legal briefs faster."
+- "A system aimed at accelerating legal brief writing for public defenders."
+
+Output: fail
+
+### Example B (New key detail → pass)
+Snippet:
+"The user wants a tool to help public defenders draft **appeals** faster."
+Semantically similar snippets:
+- "The user wants to build a tool to help public defenders generate legal briefs faster."
+- "Tool to speed up brief writing for public defenders."
+
+Output: pass
+(Reason: “appeals” is a specific, new scope not present above.)
+
+### Example C (Different actor → pass)
+Snippet:
+"The user wants a tool for **prosecutors** to speed up charging memos."
+Semantically similar snippets:
+- "The user wants a tool for public defenders to write briefs faster."
+
+Output: pass
+
+### Example D (Contradiction → pass)
+Snippet:
+"The user **no longer** plans to build the public defender brief tool."
+Semantically similar snippets:
+- "The user plans to build a public defender brief tool."
+
+Output: pass
+
+### Example E (Numbers differ materially → pass)
+Snippet:
+"The team aims to reduce drafting time by **50%**."
+Semantically similar snippets:
+- "The team aims to reduce drafting time by **10%**."
+
+Output: pass
+
+### Example F (Formatting/style only → fail)
+Snippet:
+"Goal: accelerate public defender legal brief drafting."
+Semantically similar snippets:
+- "The goal is to make public defenders' legal brief drafting faster."
+
+Output: fail
+
+### Example G (Subset with **new** material → pass)
+Snippet:
+"Build a tool to help public defenders generate legal briefs faster **using retrieval-augmented drafting**."
+Semantically similar snippets:
+- "Build a tool to help public defenders generate legal briefs faster."
+
+Output: pass
+
+## Final Instruction
+Return exactly one token: **pass** or **fail**.
+No explanations, no punctuation, no quotes.
+
+---
+"""
+    return prompt
